@@ -21,7 +21,7 @@
 
 const EVENTO = {
   // O titulo. Aparece no H1, na aba do navegador e na coluna "Evento".
-  nome: "Famosinha Com Betim ATL",
+  nome: "SUBMUNDO EDITION COM WS DA IGREJINHA",
 
   // Nome da lista. Aparece em laranja acima do formulario e vai pra planilha.
   lista: "Lista OFFs BH",
@@ -30,7 +30,7 @@ const EVENTO = {
   local: "Night Market",
 
   // Data e hora. Formato: "AAAA-MM-DDTHH:MM" (ano-mes-diaThora:minuto).
-  data: "2026-09-19T22:00",
+  data: "2026-10-16T22:00",
 
   // Aviso que aparece logo abaixo do nome da lista. Ex: "Free ate 23h".
   aviso_da_lista: "",
@@ -58,7 +58,7 @@ const EVENTO = {
 const GRUPOS = [
   {
     titulo:    "TicketHub",
-    descricao: "SUBSTITUA: diga o que a pessoa ganha entrando neste grupo.",
+    descricao: "Ingressos e listas para todos os eventos de BH.",
     foto:      "logo_tickethub.png",
     ajuste:    "cover",     // o ticket fica no meio: o corte do topo/base nao o atinge
     fundo:     "#F1F1F1",   // cor real do fundo da imagem (medida no arquivo)
@@ -67,7 +67,7 @@ const GRUPOS = [
   },
   {
     titulo:    "OFFS BH",
-    descricao: "SUBSTITUA: diga o que a pessoa ganha entrando neste grupo.",
+    descricao: "Ingressos e listas para todos os eventos do Night Market.",
     foto:      "Offs_Logo.png",
     ajuste:    "contain",   // o circulo ocupa toda a altura: cortar destruiria o logo
     fundo:     "#010101",   // cor real do fundo da imagem (medida no arquivo)
