@@ -307,10 +307,10 @@ function renderEventInfo() {
   const d = new Date(EVENT.start_date);
   const pad = n => String(n).padStart(2, "0");
 
-  /* O original imprime o dia da semana em INGLES dentro de um .text-capitalize
-     (locale nao configurado no app deles). Comportamento replicado.          */
+  /* Dia da semana em portugues (ex: "sexta-feira"). O .text-capitalize do HTML
+     deixa a primeira letra maiuscula na tela.                                 */
   document.getElementById("eventWeekday").textContent =
-    " " + d.toLocaleDateString("en-US", { weekday: "long" });
+    " " + d.toLocaleDateString("pt-BR", { weekday: "long" });
   document.getElementById("eventDate").textContent =
     pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + " às " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + " ";
 
