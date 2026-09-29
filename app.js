@@ -23,10 +23,10 @@ const EVENTO = {
   // O titulo. Aparece no H1, na aba do navegador e na coluna "Evento".
   nome: "SUBMUNDO EDITION COM WS DA IGREJINHA",
 
-  // Nome da lista. Aparece em laranja acima do formulario e vai pra planilha.
+  // Nome da lista. Aparece como titulo do card do formulario.
   lista: "Lista OFFs BH",
 
-  // Local do evento.
+  // Local do evento. Aparece na barra do topo e no selo do card do evento.
   local: "Night Market",
 
   // Data e hora. Formato: "AAAA-MM-DDTHH:MM" (ano-mes-diaThora:minuto).
@@ -36,10 +36,7 @@ const EVENTO = {
   aviso_da_lista: "",
 
   // true = mostra o botao "Adicionar outro convidado". false = um nome so.
-  varios_nomes: true,
-
-  // Link usado nos botoes de compartilhar. Vazio = usa a URL da propria pagina.
-  link_divulgacao: ""
+  varios_nomes: true
 };
 
 /* ---------------------------------------------------------------------------
@@ -80,7 +77,7 @@ const GRUPOS = [
 const GRUPOS_TITULO = "Nossos grupos";
 
 /* Campos do formulario. Comente com // para esconder, descomente para mostrar.
-   A ordem na tela e fixa (nome, nascimento, telefone) - a ordem desta lista
+   A ordem na tela e fixa (nome, telefone, nascimento) - a ordem desta lista
    nao importa.                                                               */
 const CAMPOS = [
   { id: 0, obrigatorio: true },     // Nome
@@ -104,8 +101,7 @@ const EVENT = {
   start_date: EVENTO.data,
   list_name: EVENTO.lista,
   list_description: EVENTO.aviso_da_lista,
-  allow_multiple_names: EVENTO.varios_nomes,
-  share_url: EVENTO.link_divulgacao
+  allow_multiple_names: EVENTO.varios_nomes
 };
 
 const FIELD_LIST = CAMPOS.map(c => ({ id: c.id, required: c.obrigatorio ? "1" : "0" }));
@@ -115,14 +111,14 @@ const FIELD_LIST = CAMPOS.map(c => ({ id: c.id, required: c.obrigatorio ? "1" : 
    da Vipme (0=Nome, 2=Telefone, 4=Data de nascimento); os outros que existiam
    la - e-mail, sexo, CPF e RG - foram removidos porque nos nao perguntamos.
 
-   A ordem de renderizacao e fixa (nome, nascimento, telefone), e nao segue a
+   A ordem de renderizacao e fixa (nome, telefone, nascimento), e nao segue a
    ordem desta lista nem a de CAMPOS.                                         */
 const FIELD_DEFS = {
-  0: { key: "name",  label: "Nome:",                     type: "text", mask: null,              autocomplete: "name" },
-  4: { key: "bday",  label: "Data do seu aniversário: ", type: "tel",  mask: "00/00/0000",      autocomplete: "bday" },
-  2: { key: "phone", label: "Telefone: ",                type: "tel",  mask: "(00) 00000-0000", autocomplete: "tel" }
+  0: { key: "name",  label: "Nome",               placeholder: "Nome e Sobrenome", icon: "fa-user",          type: "text", mask: null,              autocomplete: "name" },
+  2: { key: "phone", label: "Telefone",           placeholder: "Telefone",         icon: "fa-phone",         type: "tel",  mask: "(00) 00000-0000", autocomplete: "tel" },
+  4: { key: "bday",  label: "Data de nascimento", placeholder: "dd/mm/aaaa",       icon: "fa-birthday-cake", type: "tel",  mask: "00/00/0000",      autocomplete: "bday" }
 };
-const RENDER_ORDER = [0, 4, 2];
+const RENDER_ORDER = [0, 2, 4];
 
 const activeFields = RENDER_ORDER
   .filter(id => FIELD_LIST.some(f => Number(f.id) === id))
@@ -188,29 +184,33 @@ function renderGuests() {
   attendingEl.innerHTML = "";
 
   attendingList.forEach((guest, index) => {
-    const row = document.createElement("div");
-    row.className = "row";
+    const block = document.createElement("div");
+    block.className = "guest";
+
+    if (attendingList.length > 1) {
+      const tag = document.createElement("p");
+      tag.className = "guest-label";
+      tag.textContent = "Convidado " + (index + 1);
+      block.appendChild(tag);
+    }
 
     activeFields.forEach(field => {
-      const col = document.createElement("div");
-      col.className = "col-xs-12 col-sm-4";
-
-      const fs = document.createElement("fieldset");
-      fs.className = "form-group";
-
       const inputId = "f-" + index + "-" + field.key;
 
+      /* Campo no estilo da referencia: icone a esquerda, placeholder no lugar
+         do rotulo e "* obrigatorio" a direita. O mesmo espaco da direita
+         vira a mensagem de erro. O <label> continua existindo, so escondido,
+         para leitor de tela.                                                 */
+      const box = document.createElement("div");
+      box.className = "field";
+
       const label = document.createElement("label");
-      label.className = "blue-grey lighten-1";
+      label.className = "sr-only";
       label.setAttribute("for", inputId);
       label.textContent = field.label;
-      fs.appendChild(label);
+      box.appendChild(label);
 
-      const err = document.createElement("span");
-      err.className = "error-message";
-      err.id = "err-" + index + "-" + field.key;
-      err.hidden = true;
-      fs.appendChild(err);
+      box.insertAdjacentHTML("beforeend", '<i class="fa ' + field.icon + '" aria-hidden="true"></i>');
 
       const input = document.createElement("input");
       input.type = field.type;
@@ -219,8 +219,8 @@ function renderGuests() {
         input.setAttribute("inputmode", "numeric");
         input.maxLength = field.mask.length;
       }
-      input.className = "form-control";
       input.id = inputId;
+      input.placeholder = field.placeholder;
       input.value = guest[field.key] || "";
       if (field.required) input.required = true;
 
@@ -230,13 +230,18 @@ function renderGuests() {
         clearError(index, field);
       });
       input.addEventListener("blur", () => showError(index, field));
+      box.appendChild(input);
 
-      fs.appendChild(input);
-      col.appendChild(fs);
-      row.appendChild(col);
+      const hint = document.createElement("span");
+      hint.className = "field-hint";
+      hint.id = "err-" + index + "-" + field.key;
+      hint.textContent = defaultHint(field);
+      box.appendChild(hint);
+
+      block.appendChild(box);
     });
 
-    attendingEl.appendChild(row);
+    attendingEl.appendChild(block);
   });
 
   renderMultiNameRow();
@@ -254,7 +259,7 @@ function renderMultiNameRow() {
   if (attendingList.length > 1) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "btn btn-default m-t-10";
+    btn.className = "btn-ghost";
     btn.innerHTML = '<i class="fa fa-minus"></i> Remover';
     btn.addEventListener("click", () => {
       attendingList.pop();
@@ -264,6 +269,10 @@ function renderMultiNameRow() {
   }
 }
 
+function defaultHint(field) {
+  return field.required ? "* obrigatório" : "";
+}
+
 function showError(index, field) {
   const err = document.getElementById("err-" + index + "-" + field.key);
   const input = document.getElementById("f-" + index + "-" + field.key);
@@ -271,16 +280,15 @@ function showError(index, field) {
   const msg = fieldError(field, attendingList[index][field.key]);
   if (!msg) { clearError(index, field); return; }
   err.textContent = msg;
-  err.hidden = false;
-  input.closest("fieldset").classList.add("has-error");
+  input.closest(".field").classList.add("has-error");
 }
 
 function clearError(index, field) {
   const err = document.getElementById("err-" + index + "-" + field.key);
   const input = document.getElementById("f-" + index + "-" + field.key);
   if (!err || !input) return;
-  err.hidden = true;
-  input.closest("fieldset").classList.remove("has-error");
+  err.textContent = defaultHint(field);
+  input.closest(".field").classList.remove("has-error");
 }
 
 function validateAll() {
@@ -298,31 +306,24 @@ function validateAll() {
 
 /* ============================ Cabecalho do evento ========================= */
 function renderEventInfo() {
+  document.getElementById("topTitle").textContent = EVENT.place_name;
   document.getElementById("eventName").textContent = EVENT.event_name;
   document.getElementById("placeName").textContent = EVENT.place_name;
   document.getElementById("listName").textContent = EVENT.list_name;
-  document.getElementById("listDescription").textContent = EVENT.list_description || "";
-
+  const note = document.getElementById("listDescription");
+  note.textContent = EVENT.list_description || "";
+  note.hidden = !EVENT.list_description;
 
   const d = new Date(EVENT.start_date);
   const pad = n => String(n).padStart(2, "0");
+  const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 
-  /* Dia da semana em portugues (ex: "sexta-feira"). O .text-capitalize do HTML
-     deixa a primeira letra maiuscula na tela.                                 */
-  document.getElementById("eventWeekday").textContent =
-    " " + d.toLocaleDateString("pt-BR", { weekday: "long" });
-  document.getElementById("eventDate").textContent =
-    pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + " às " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + " ";
-
-  const url = EVENT.share_url || window.location.href;
-  const whats = document.getElementById("shareWhats");
-  const fb = document.getElementById("shareFacebook");
-  const tw = document.getElementById("shareTwitter");
-  whats.href = "whatsapp://send?text=" + encodeURIComponent(url);
-  fb.href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
-  tw.href = "https://twitter.com/intent/tweet?url=" + encodeURIComponent(url);
-  fb.target = "_blank"; fb.rel = "noopener";
-  tw.target = "_blank"; tw.rel = "noopener";
+  /* Mesmo formato da referencia ("Sat 03 October"), em portugues:
+     "Sex 16 Outubro". O pt-BR devolve "sex." - o ponto sai.                 */
+  const weekday = cap(d.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""));
+  const month = cap(d.toLocaleDateString("pt-BR", { month: "long" }));
+  document.getElementById("eventDate").textContent = weekday + " " + pad(d.getDate()) + " " + month;
+  document.getElementById("eventTime").textContent = pad(d.getHours()) + ":" + pad(d.getMinutes());
 
   /* Um unico lugar define o titulo: EVENTO.nome. Aba, og: e twitter: seguem. */
   document.title = EVENT.event_name;
@@ -494,7 +495,7 @@ function showSuccess(names) {
       .map(n => '<div class="swal-name-item"><i class="fa fa-check text-success"></i> ' + escapeHtml(n) + "</div>")
       .join(""),
     icon: "success",
-    confirmButtonColor: "#FF4D00"
+    confirmButtonColor: "#4A89DC"
   });
 }
 
@@ -518,9 +519,10 @@ document.getElementById("guestForm").addEventListener("submit", async e => {
   }
 
   const btn = e.target.querySelector(".btn-send-data");
-  const originalLabel = btn.textContent;
+  const btnLabel = btn.querySelector(".btn-send-label");
+  const originalLabel = btnLabel.textContent;
   btn.disabled = true;
-  btn.textContent = "Enviando...";
+  btnLabel.textContent = "Enviando...";
 
   const payload = buildPayload();
 
@@ -537,11 +539,11 @@ document.getElementById("guestForm").addEventListener("submit", async e => {
       title: "",
       text: err.message || "Não foi possível enviar.",
       icon: "error",
-      confirmButtonColor: "#FF4D00"
+      confirmButtonColor: "#4A89DC"
     });
   } finally {
     btn.disabled = false;
-    btn.textContent = originalLabel;
+    btnLabel.textContent = originalLabel;
   }
 });
 

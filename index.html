@@ -14,136 +14,80 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" id="twTitle" content="">
 
-  <!-- Font Awesome 4.7 - mesma versao de icones do original (fa fa-map-marker, fa-whatsapp, fa-plus...) -->
+  <!-- Font Awesome 4.7 (fa-user, fa-phone, fa-birthday-cake, fa-paper-plane, fa-map-marker...) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!-- SweetAlert2 - o original usa exatamente esta lib no modal de confirmacao -->
+  <!-- SweetAlert2 - modal de confirmacao -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.css">
+  <!-- Roboto: a fonte do layout novo da Vipme -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
 
-  <!--
-    NOTA DE FIDELIDADE: o site original declara as familias Raleway / "Open sans" /
-    "Architects Daughter" no CSS mas NAO carrega nenhuma delas. Na pratica o navegador
-    cai para Helvetica/Arial. Mantive o mesmo comportamento para o clone renderizar
-    identico ao original na mesma maquina.
-    Para o visual "pretendido" (com as fontes de verdade), descomente a linha abaixo:
-  -->
-  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;600&family=Open+Sans:wght@300;600&family=Architects+Daughter&display=swap"> -->
-
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 
 <body>
-<div class="step">
 
-  <div class="menu">
-    <div class="container">
-      <div class="logo">
-          <img src="https://www.vipme.com.br/images/vipme_logo_principal.png" width="100" alt="Vipme">
+<!-- Barra do topo: nome do local, centralizado -->
+<header class="topbar">
+  <span id="topTitle"></span>
+</header>
+
+<main class="page">
+
+  <!-- Card 1: a lista + formulario -->
+  <section class="card">
+    <span class="badge">
+      <!-- FA 4.7 nao tem coroa; SVG inline no lugar -->
+      <svg class="badge-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4.5 4L12 4l4.5 7L21 7l-2 12H5L3 7z" fill="currentColor"/></svg>
+      Lista
+    </span>
+    <h2 class="card-title" id="listName"></h2>
+    <p class="card-note" id="listDescription" hidden></p>
+
+    <form novalidate id="guestForm">
+      <div id="attendingList"></div>
+
+      <div class="multi-row" id="multiNameRow">
+        <div id="removeSlot"></div>
+        <button type="button" class="btn-ghost" id="btnAdd">
+          <i class="fa fa-plus"></i> Adicionar outro convidado
+        </button>
+      </div>
+
+      <button type="submit" class="btn-send btn-send-data">
+        <span class="btn-send-ico"><i class="fa fa-paper-plane" aria-hidden="true"></i></span>
+        <span class="btn-send-label">Enviar nome</span>
+      </button>
+    </form>
+  </section>
+
+  <!-- Card 2: o evento -->
+  <section class="card">
+    <span class="badge"><i class="fa fa-map-marker" aria-hidden="true"></i> <span id="placeName"></span></span>
+    <h2 class="card-title" id="eventName"></h2>
+    <div class="event-meta">
+      <div class="event-meta-item">
+        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+        <div><small>Data</small><strong id="eventDate"></strong></div>
+      </div>
+      <div class="event-meta-item">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        <div><small>Horário</small><strong id="eventTime"></strong></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="header"></div>
+  <!-- Card 3: grupos de WhatsApp (continuam no fim da pagina) -->
+  <section class="card groups-block">
+    <span class="badge"><i class="fa fa-whatsapp" aria-hidden="true"></i> Grupos</span>
+    <h2 class="card-title" id="gruposTitulo"></h2>
+    <div class="groups-grid" id="gruposCards"></div>
+  </section>
 
-  <div class="event-info-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12"><h1 id="eventName"></h1></div>
-      </div>
-      <div class="row event-info">
-        <div class="col-xs-12">
-          <p><span aria-hidden="true" class="fa fa-map-marker ico-top"></span> <span id="placeName"></span></p>
-          <p><span aria-hidden="true" class="fa fa-calendar ico-top"></span><span class="text-capitalize" id="eventWeekday"></span> <span id="eventDate"></span></p>
-        </div>
-      </div>
-    </div>
-  </div>
+</main>
 
-  <div class="event-share-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12">
-          <div style="float:left;margin-top:3px;margin-right:10px;">Compartilhar:</div>
-          <a id="shareWhats" class="fa fa-whatsapp" style="font-size:30px;color:#1ebea5;text-decoration:none;" href="#" aria-label="Compartilhar no WhatsApp"></a>
-          <a id="shareTwitter" href="#" class="fa fa-twitter m-l-5" style="font-size:30px;color:#1da1f2;margin-left:10px;text-decoration:none;" aria-label="Compartilhar no Twitter"></a>
-          <a id="shareFacebook" href="#" class="fa fa-facebook-official m-l-5" style="font-size:30px;color:#4267b2;margin-left:10px;text-decoration:none;" aria-label="Compartilhar no Facebook"></a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-gray">
-    <div class="container">
-
-      <div class="list-section">
-        <div class="row section-title">
-          <div class="col-xs-12"><h4 id="listName"></h4></div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="dblBorder">
-              <div class="form-event-no-lists">
-                <div class="row">
-                  <div class="col-xs-12"><p id="listDescription" style="white-space:pre-wrap;"></p></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <form novalidate id="guestForm">
-          <div class="form-customer-data">
-            <div class="row">
-              <div class="col-xs-12"><h5>Informe Os Seus Dados Para Adicionar Seu Nome Na Lista</h5></div>
-            </div>
-
-            <div id="attendingList"></div>
-
-            <div class="row" id="multiNameRow">
-              <div class="col-xs-6" id="removeSlot"></div>
-              <div class="col-xs-6">
-                <button type="button" class="pull-right btn btn-default m-t-10" id="btnAdd">
-                  <i class="fa fa-plus"></i> Adicionar outro convidado
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-xs-12 col-sm-12">
-              <button type="submit" class="btn-book w-100 m-t-10 m-b-10 btn-send-data">Enviar</button>
-            </div>
-          </div>
-        </form>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Secao "Sobre / Local" removida. O local continua aparecendo na linha com
-       o icone de mapa, logo abaixo do titulo, e continua indo para a planilha. -->
-
-  <div class="producer-section">
-    <div class="container">
-      <!-- Bloco "Produtora / MIRADOR" removido. O nome da produtora continua
-           indo para a planilha, na coluna "Produtora". -->
-
-      <div class="groups-block">
-        <div class="row section-title">
-          <div class="col-xs-12"><h4 id="gruposTitulo"></h4></div>
-        </div>
-        <div class="groups-grid" id="gruposCards"></div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Rodape removido (logo Vipme, "Organiza eventos?", copyright e links). -->
-
-</div>
+<!-- Rodape removido (logo Vipme, copyright e links). -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"></script>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
