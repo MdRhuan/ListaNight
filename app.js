@@ -21,10 +21,10 @@
 
 const EVENTO = {
   // O titulo. Aparece no H1, na aba do navegador e na coluna "Evento".
-  nome: "SUBMUNDO EDITION COM WS DA IGREJINHA",
+  nome: "Rio California",
 
   // Nome da lista. Aparece como titulo do card do formulario.
-  lista: "Lista OFFs BH",
+  lista: "Lista do Biel Bday",
 
   // Local do evento. Aparece na barra do topo e no selo do card do evento.
   local: "Night Market",
