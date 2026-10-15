@@ -30,7 +30,7 @@ const EVENTO = {
   local: "Night Market",
 
   // Data e hora. Formato: "AAAA-MM-DDTHH:MM" (ano-mes-diaThora:minuto).
-  data: "2026-10-16T22:00",
+  data: "2026-10-18T15:00",
 
   // Aviso que aparece logo abaixo do nome da lista. Ex: "Free ate 23h".
   aviso_da_lista: "",
