@@ -24,7 +24,7 @@ const EVENTO = {
   nome: "Rio California",
 
   // Nome da lista. Aparece como titulo do card do formulario.
-  lista: "Lista do Michael",
+  lista: "Bday do Michael",
 
   // Local do evento. Aparece na barra do topo e no selo do card do evento.
   local: "Night Market",
