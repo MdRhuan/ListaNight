@@ -24,13 +24,13 @@ const EVENTO = {
   nome: "Rio California",
 
   // Nome da lista. Aparece como titulo do card do formulario.
-  lista: "Lista do Biel Bday",
+  lista: "Lista do Michael",
 
   // Local do evento. Aparece na barra do topo e no selo do card do evento.
   local: "Night Market",
 
   // Data e hora. Formato: "AAAA-MM-DDTHH:MM" (ano-mes-diaThora:minuto).
-  data: "2026-10-18T15:00",
+  data: "2027-01-17T15:00",
 
   // Aviso que aparece logo abaixo do nome da lista. Ex: "Free ate 23h".
   aviso_da_lista: "",
